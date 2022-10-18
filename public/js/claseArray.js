@@ -21,21 +21,23 @@ class Arrays{
         return data
     }
 
-    modify(id, producto){
-        producto.id = id
-        return this.array.splice(parseInt(id-1),1,producto)
+    modify = (req, res) => {
+        const { id } = req.params
+        const product = req.body
+        product.id = id
+        this.array.splice(parseInt(id - 1), 1, product)
+        res.json({ modifiedProduct: product })
     }
 
     findById(id){
-        let producto = this.array.find(num => num.id === id)
+        let producto = this.array.find(num => num.id == id)
         return producto
     }
 
-    delete(id){
-        let nuevaLista = this.array.filter(elem => elem.id != id)
-        this.array.push(nuevaLista)
-        console.log(`Elemento borrado ${this.findById(id)}`)
-        return nuevaLista
+    delete = (req, res) => {
+        const { id } = req.params
+        const product = this.array.splice(parseInt(id - 1), 1)
+        res.json({ deletedProduct: product })
     }
 
 }
