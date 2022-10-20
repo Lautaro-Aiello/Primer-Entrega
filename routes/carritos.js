@@ -12,15 +12,14 @@ routerCarritos.use(express.urlencoded({extended:true }));
 // Carrito = carritos
 
 
-const arrayCarrito = new Arrays()
+const carrito = new Arrays("carritos.txt")
 
-routerCarritos.post("/", (req, res) => {
-    arrayCarrito.addCarrito(req, res)
-    console.log(req.body)
+routerCarritos.post("/", async (req, res) => {
+    await carrito.createCarrito(req,res)
 })
 
-routerCarritos.delete("/:id", (req, res) => {
-    res.send()
+routerCarritos.delete("/:id", async (req, res) => {
+    await carrito.deleteCarrito(req,res)
 })
 
 routerCarritos.get("/:id/productos", (req, res) => {

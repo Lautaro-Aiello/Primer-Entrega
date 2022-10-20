@@ -32,18 +32,7 @@ class Arrays{
         return data
     }
 
-    addCarrito = (req, res) => {
-        let element = req.body
-        element.id = this.array.length + 1
-        element.timestamp = Date.now()
-        element.productos = [productos]
-        this.array.push(element)
-        res.json(element)
-    }
 
-    pushCarrito = (req, res) => {
-
-    }
     
     async modify  (req, res) {
         const { id } = req.params
@@ -78,6 +67,80 @@ class Arrays{
         let eliminado = contenidoObj.find(objeto => objeto.id === num) 
         return (eliminado)
     }
+
+    async createCarrito(req, res){
+        const data = await fs.promises.readFile(this.archivo, "utf-8")
+        const dataObj = JSON.parse(data)
+        let prod = req.body
+        let newId;
+        if(prod.length > 0){
+            newId = prod.length + 1;
+        }else{
+            newId = 1
+        }
+        prod.id = newId;
+        prod.timestamp = Date.now()
+        let id = dataObj[dataObj.length - 1] + 1;
+        let timestamp = Date.now()
+        let carro = {
+            id: id,
+            timestamp: timestamp,
+            productos: [prod]
+        }
+        dataObj.push(carro)
+        if(dataObj.length == 0){
+            id = 1;
+            carro.id = id
+        }else{
+            carro.id = dataObj.length;
+        }
+        await fs.promises.writeFile(this.archivo, JSON.stringify(dataObj))
+        console.log(carro)
+        res.json(carro)
+        return carro
+    }
+
+
+    async  getCarritoById(req,res) {
+        const data = await fs.promises.readFile(this.archivo, "utf-8")
+        const allCarritos = JSON.parse(data)
+        const {id} = req.params
+        const carrito = allCarritos.filter(c => c.id == id);
+        if (carrito.length === 0) {
+            return null;
+        }
+        res.json(carrito[0])
+        return carrito[0];
+    }
+
+    async deleteCarrito (req, res)  {
+        const data = await fs.promises.readFile(this.archivo, "utf-8")
+        const allCarritos = JSON.parse(data)
+        let {id} = req.params
+        const cart = await this.getCarritoById(id)
+        const carritos = allCarritos.filter(carro => carro.id != id)
+        if (allCarritos.length !== carritos.length) {
+            await fs.promises.writeFile(this.archivo, JSON.stringify(carritos, null, 2));
+        }
+        res.json(cart)
+        return cart;
+        
+        
+    }
+
+    async productsCarrito (req, res)  {
+
+    } 
+
+    async addProductsCarrito (req, res)  {
+
+    } 
+
+     async deleteProductInCarrito (req,res)  {
+
+    }
+
+    
 
 }
 

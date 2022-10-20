@@ -1,1 +1,1 @@
-[]
+[{"id":1,"timestamp":1666301593945,"productos":[{"nombre":"remera","descripcion":"rojo","codigo":"123434","fotoUrl":"www.coderhouse.com","precio":22444,"stock":7,"id":1,"timestamp":1666301593945}]},{"id":2,"timestamp":1666301601155,"productos":[{"nombre":"short","descripcion":"rojo","codigo":"123434","fotoUrl":"www.coderhouse.com","precio":22444,"stock":7,"id":1,"timestamp":1666301601155}]}]
