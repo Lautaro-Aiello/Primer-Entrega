@@ -1,7 +1,6 @@
 const express = require ("express")
 const { Router } = express
 const { authMiddleware } = require("../middlewares/index")
-const Contenedor = require("../public/js/Contenedor")
 const Arrays = require("../public/js/claseArray")
 const routerProductos = Router()
 
@@ -9,28 +8,30 @@ const routerProductos = Router()
 routerProductos.use(express.json());
 routerProductos.use(express.urlencoded({extended: true}));
 
-const productos = []
-const arrayProducto = new Arrays(productos)
-const contenedorProductos = new Contenedor("productos.txt")
+// let producto = require("productos.txt")
+// let productos = []
+// Producto = productos
 
+const arrayProducto = new Arrays("productos.txt")
 
-routerProductos.get("/:id?", (req, res) => {
-    let resultado = arrayProducto.get(req.params.id)
+routerProductos.get("/:id?", async (req, res) => {
+    let resultado = (await arrayProducto.get(req.params.id))
     res.json(resultado)
 })
 
-routerProductos.post("/", authMiddleware , (req, res) => {
-    let agregado = arrayProducto.add(req.body)
+routerProductos.post("/", authMiddleware , async (req, res) => {
+    let agregado = (await arrayProducto.add(req.body))
     console.log(req.body)
     res.json(agregado)
 })
 
-routerProductos.put("/:id", authMiddleware , (req, res) => {
-    arrayProducto.modify(req,res)
+routerProductos.put("/:id", authMiddleware , async (req, res) => {
+    await arrayProducto.modify(req,res)
 })
 
-routerProductos.delete("/:id", authMiddleware , (req, res) => {
-    arrayProducto.delete(req,res)
+routerProductos.delete("/:id", authMiddleware , async (req, res) => {
+    const {id} = req.params
+    res.json(await arrayProducto.delete(id))
 })
 
 module.exports = routerProductos;
