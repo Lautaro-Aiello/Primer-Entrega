@@ -28,7 +28,7 @@ class Arrays{
         data.id = newId;
         data.timestamp = Date.now()
         response.push(data)
-        await fs.promises.writeFile(this.archivo, JSON.stringify(response))
+        await fs.promises.writeFile(this.archivo, JSON.stringify(response,null,2))
         return data
     }
 
@@ -43,7 +43,7 @@ class Arrays{
         const filter = allProducts.filter(i => i.id !== originalProduct.id)
         filter.push(product)
         console.log(filter)
-        await fs.promises.writeFile(this.archivo, JSON.stringify(filter))
+        await fs.promises.writeFile(this.archivo, JSON.stringify(filter,null,2))
         res.json({modifyProduct: product})
         return this.findById(product)
     }

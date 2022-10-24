@@ -1,1 +1,1 @@
-[{"nombre":"zapato","descripcion":"rojo","codigo":"123434","fotoUrl":"www.coderhouse.com","precio":22444,"stock":7,"id":1,"timestamp":1666480988463},{"nombre":"remera","descripcion":"rojo","codigo":"123434","fotoUrl":"www.coderhouse.com","precio":22444,"stock":7,"id":2,"timestamp":1666480995653},{"nombre":"ooola","descripcion":"rojo","codigo":"123434","fotoUrl":"www.coderhouse.com","precio":22444,"stock":7,"id":3,"timestamp":1666494934321}]
+[]
