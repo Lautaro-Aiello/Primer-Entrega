@@ -68,25 +68,18 @@ class Arrays{
         return (eliminado)
     }
 
-    async createCarrito(req, res){
+    async createCarrito(req, res, productos){
         const data = await fs.promises.readFile(this.archivo, "utf-8")
         const dataObj = JSON.parse(data)
-        let prod = req.body
-        let newId;
-        if(prod.length > 0){
-            newId = prod.length + 1;
-        }else{
-            newId = 1
-        }
-        prod.id = newId;
-        prod.timestamp = Date.now()
+        let prod = productos
         let id = dataObj[dataObj.length - 1] + 1;
         let timestamp = Date.now()
         let carro = {
             id: id,
             timestamp: timestamp,
-            productos: [prod]
+            productos: prod
         }
+        
         dataObj.push(carro)
         if(dataObj.length == 0){
             id = 1;
@@ -94,53 +87,90 @@ class Arrays{
         }else{
             carro.id = dataObj.length;
         }
-        await fs.promises.writeFile(this.archivo, JSON.stringify(dataObj))
+        await fs.promises.writeFile(this.archivo, JSON.stringify(dataObj,null,2))
         console.log(carro)
         res.json(carro)
         return carro
     }
 
 
-    async  getCarritoById(req,res) {
+    async getCarritoById(req,res) {
+        const {id} = req.params
         const data = await fs.promises.readFile(this.archivo, "utf-8")
         const allCarritos = JSON.parse(data)
-        const {id} = req.params
         const carrito = allCarritos.filter(c => c.id == id);
         if (carrito.length === 0) {
             return null;
         }
-        res.json(carrito[0])
         return carrito[0];
     }
 
     async deleteCarrito (req, res)  {
+        let {id} = req.params
         const data = await fs.promises.readFile(this.archivo, "utf-8")
         const allCarritos = JSON.parse(data)
-        let {id} = req.params
-        const cart = await this.getCarritoById(id)
-        const carritos = allCarritos.filter(carro => carro.id != id)
-        if (allCarritos.length !== carritos.length) {
-            await fs.promises.writeFile(this.archivo, JSON.stringify(carritos, null, 2));
-        }
-        res.json(cart)
-        return cart;
-        
-        
+        const nuevaLista = allCarritos.find((carro) => carro.id != id)
+        console.log(nuevaLista)
+        await fs.promises.writeFile(this.archivo, JSON.stringify(nuevaLista,null,2));
+        return nuevaLista;
     }
 
-    async productsCarrito (req, res)  {
-
+    async productsCarrito (req, res) {
+        const {id} = req.params
+        const carrito = await this.getCarritoById(req,res)
+        if(carrito){
+            let prod = carrito.productos
+            res.json({productos: prod})
+            console.log({productos: prod})
+            return ({productos: prod});
+        }else{
+            return null
+        }    
     } 
 
     async addProductsCarrito (req, res)  {
-
+        let {id} = req.params
+        const read = await fs.promises.readFile(this.archivo, 'utf-8' );
+        const carritos = JSON.parse(read);
+        const carrito = carritos.find( prod => prod.id == id );
+        const producto = req.body
+        producto.id = (carrito.productos.length + 1) + 1
+        producto.timestamp = Date.now()
+        if(carrito == undefined){
+            res.send({error: "Carrito no encontrado"})
+        }else{
+            carrito.productos.push(producto)
+            await fs.promises.writeFile(this.archivo, JSON.stringify(carritos,null,2))
+            res.json( carrito)
+        }
+        
     } 
 
-     async deleteProductInCarrito (req,res)  {
 
+    async deleteProductInCarrito (req,res)  {
+        let {id} = req.params
+        let {id_prod} = req.params
+        
+        const carritos = await this.get()
+        //Buscar carrito por id
+        const carrito = carritos.find( prod => prod.id == id );
+        if ( carrito == undefined ){
+            res.send({ error: 'Carrito no encontrado' });
+        } else {
+            //Buscar index del producto en el array
+            const idx = carrito.productos.findIndex( p => p.id == id_prod );
+            if( idx === -1 ){
+            res.send({ error: 'Producto no encontrado' })
+            } else {
+            //Eliminar producto
+            carrito.productos.splice( idx, 1 );
+            await fs.promises.writeFile( this.archivo, JSON.stringify( carritos, null, 2) );
+            res.send( `Se elimino el producto con id: ${ id_prod } del carrito ${ id }` );
+
+            }
+
+        }
     }
-
-    
 
 }
 
