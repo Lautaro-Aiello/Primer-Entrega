@@ -2,6 +2,8 @@ const express = require ("express")
 const app = express()
 const routerProductos = require("./routes/productos")
 const routerCarritos = require("./routes/carritos")
+const mongoose = require ("mongoose")
+
 
 app.use(express.static("./public"))
 
@@ -18,6 +20,18 @@ app.post('*', (req, res) => {
     res.json("Error: Ruta o metodo no implementado");
 }
 );
+
+
+try {
+    const url = "mongodb://localhost:27017/ecommerce"
+    const rta = await mongoose.connect(url, {
+        useNewUrlParse: true,
+        useUnifiedTopology: true,
+    })
+    console.log("Base de datos conectada")
+} catch (error) {
+    console.log(error)
+}
 
 const PORT = process.env.PORT || 8080
 
